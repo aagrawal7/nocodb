@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { validatePassword } from 'nocodb-sdk'
+import { validatePassword ,validateUsername } from 'nocodb-sdk'
 import type { RuleObject } from 'ant-design-vue/es/form'
 import {
   definePageMeta,
@@ -52,6 +52,7 @@ const formRules = {
       message: t('msg.error.signUpRules.emailInvalid'),
     },
   ] as RuleObject[],
+
   password: [
     {
       validator: (_: unknown, v: string) => {
@@ -63,7 +64,25 @@ const formRules = {
       },
     },
   ] as RuleObject[],
+
+  username:[
+    // Username must be valid format
+    {
+      validator: (_: unknown, v: string) => {
+        return new Promise((resolve, reject) => {
+          if(v?.length==0) return resolve()
+          const { error, valid } = validateUsername(v)
+          if (valid) return resolve()
+          reject(new Error(error))
+        })
+      },
+      message: t('msg.error.signUpRules.usernameInvalid'),
+    },
+
+  ] as RuleObject[],
+
 }
+
 
 async function signUp() {
   if (!formValidator.value.validate()) return
@@ -125,6 +144,10 @@ function resetError() {
 
           <a-form-item :label="$t('labels.email')" name="email" :rules="formRules.email">
             <a-input v-model:value="form.email" size="large" :placeholder="$t('msg.info.signUp.workEmail')" @focus="resetError" />
+          </a-form-item>
+
+          <a-form-item :label="$t('labels.username')" name="username" :rules="formRules.username">
+            <a-input v-model:value="form.username" size="large" :placeholder="$t('msg.info.signUp.userName')" @focus="resetError" />
           </a-form-item>
 
           <a-form-item :label="$t('labels.password')" name="password" :rules="formRules.password">

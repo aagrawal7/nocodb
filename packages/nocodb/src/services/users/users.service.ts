@@ -5,6 +5,7 @@ import {
   AuditOperationTypes,
   OrgUserRoles,
   validatePassword,
+  validateUsername
 } from 'nocodb-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import { isEmail } from 'validator';
@@ -30,7 +31,7 @@ import type {
 
 @Injectable()
 export class UsersService {
-  constructor(private metaService: MetaService) {}
+  constructor(private metaService: MetaService) { }
 
   async findOne(email: string) {
     const user = await this.metaService.metaGet(null, null, MetaTable.USERS, {
@@ -60,6 +61,7 @@ export class UsersService {
     salt,
     password,
     email_verification_token,
+    username
   }: {
     firstname;
     lastname;
@@ -67,6 +69,7 @@ export class UsersService {
     salt: any;
     password;
     email_verification_token;
+    username?;
   }) {
     let roles: string = OrgUserRoles.CREATOR;
 
@@ -82,7 +85,7 @@ export class UsersService {
       let settings: { invite_only_signup?: boolean } = {};
       try {
         settings = JSON.parse((await Store.get(NC_APP_SETTINGS))?.value);
-      } catch {}
+      } catch { }
 
       if (settings?.invite_only_signup) {
         NcError.badRequest('Not allowed to signup, contact super admin.');
@@ -102,6 +105,7 @@ export class UsersService {
       email_verification_token,
       roles,
       token_version,
+      username
     });
   }
 
@@ -377,6 +381,7 @@ export class UsersService {
       lastname,
       token,
       ignore_subscribe,
+      username
     } = param.req.body;
 
     let { password } = param.req.body;
@@ -389,6 +394,25 @@ export class UsersService {
 
     if (!isEmail(_email)) {
       NcError.badRequest(`Invalid email`);
+    }
+
+    // validate username and throw error if username is satisfying the conditions
+
+    if (username) {
+      const userNameResult = validateUsername(username);
+
+      if (!userNameResult.valid) {
+        NcError.badRequest(`Username : ${userNameResult.error}`);
+
+      }
+
+      let usernameExist = await User.getByUsername(username)
+
+      if (usernameExist) {
+
+        NcError.badRequest('Username is already taken');
+
+      }
     }
 
     const email = _email.toLowerCase();
@@ -429,6 +453,7 @@ export class UsersService {
           invite_token: null,
           invite_token_expires: null,
           email: user.email,
+          username: username
         });
       } else {
         NcError.badRequest('User already exist');
@@ -441,6 +466,7 @@ export class UsersService {
         salt,
         password,
         email_verification_token,
+        username
       });
     }
     user = await User.getByEmail(email);

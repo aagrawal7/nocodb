@@ -47,7 +47,7 @@ export default class User implements UserType {
       'email_verification_token',
       'email_verified',
       'roles',
-      'token_version',
+      'token_version'
     ]);
 
     if (insertObj.email) {
@@ -82,7 +82,7 @@ export default class User implements UserType {
       'email_verification_token',
       'email_verified',
       'roles',
-      'token_version',
+      'token_version'
     ]);
 
     if (updateObj.email) {
@@ -133,6 +133,16 @@ export default class User implements UserType {
       });
       await NocoCache.set(`${CacheScope.USER}:${email}`, user);
     }
+    return user;
+  }
+
+
+  public static async getByUsername(_username: string, ncMeta = Noco.ncMeta) {
+
+     let user = await ncMeta.metaGet2(null, null, MetaTable.USERS, {
+        username: _username,
+      });
+   
     return user;
   }
 
