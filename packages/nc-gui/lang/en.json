@@ -248,6 +248,7 @@
     "cache": "Cache",
     "chat": "Chat",
     "email": "E-mail",
+    "usernameOrEmail":"Username or email",
     "storage": "Storage",
     "uiAcl": "UI-ACL",
     "models": "Models",
@@ -625,6 +626,7 @@
         "superAdmin": "You will be the 'Super Admin'",
         "alreadyHaveAccount": "Already have an account ?",
         "workEmail": "Enter your work email",
+        "workEmailOrUsername": "Enter your work email or username",
         "userName":"Enter your username",
         "enterPassword": "Enter your password",
         "forgotPassword": "Forgot your password ?",
@@ -687,6 +689,7 @@
       "dbConnectionFailed": "Connection Failure:",
       "signUpRules": {
         "emailReqd": "E-mail is required",
+        "emailOrUsernameReqd": "The field is required",
         "usernameReqd": "Username is required",
         "usernameInvalid": "At least 3 characters",
         "emailInvalid": "E-mail must be valid",

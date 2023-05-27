@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import Noco from '../Noco';
 import { Connection } from '../connection/connection';
+import { User } from '../models'
 import { genJwt } from './users/helpers';
 import { UsersService } from './users/users.service';
 import type { CreateUserDto } from '../controllers/auth.controller';
@@ -16,10 +17,12 @@ export class AuthService {
     private usersService: UsersService,
     // private jwtService: JwtService,
     private connection: Connection,
-  ) {}
+  ) { }
 
   async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(email);
+    const userByemail = await this.usersService.findOne(email);
+    const userByUsername = await User.getByUsername(email)
+    const user = userByemail || userByUsername
     if (user) {
       const { password, salt, ...result } = user;
 

@@ -36,18 +36,7 @@ const form = reactive({
 const formRules: Record<string, RuleObject[]> = {
   email: [
     // E-mail is required
-    { required: true, message: t('msg.error.signUpRules.emailReqd') },
-    // E-mail must be valid format
-    {
-      validator: (_: unknown, v: string) => {
-        return new Promise((resolve, reject) => {
-          if (validateEmail(v)) return resolve()
-
-          reject(new Error(t('msg.error.signUpRules.emailInvalid')))
-        })
-      },
-      message: t('msg.error.signUpRules.emailInvalid'),
-    },
+    { required: true, message: t('msg.error.signUpRules.emailOrUsernameReqd ') },
   ],
   password: [
     // Password is required
@@ -95,12 +84,12 @@ function resetError() {
             </div>
           </Transition>
 
-          <a-form-item :label="$t('labels.email')" name="email" :rules="formRules.email">
+          <a-form-item :label="$t('labels.usernameOrEmail')" name="email" :rules="formRules.email">
             <a-input
               v-model:value="form.email"
               data-testid="nc-form-signin__email"
               size="large"
-              :placeholder="$t('msg.info.signUp.workEmail')"
+              :placeholder="$t('msg.info.signUp.workEmailOrUsername')"
               @focus="resetError"
             />
           </a-form-item>
@@ -151,7 +140,7 @@ function resetError() {
               <nuxt-link class="prose-sm" to="/forgot-password">
                 {{ $t('msg.info.signUp.forgotPassword') }}
               </nuxt-link>
-            </div>
+            </div>  
           </div>
         </a-form>
       </div>
